@@ -1,10 +1,14 @@
+import prisma from "@/lib/db";
+
+const Page = async() => {
+  const users = await prisma.user.findMany();
 
 
-const Page = () => {
-  return <div>
-    Welcome to the NodeFlow App!
-  </div>;
-}
+ return( <div>
+    {JSON.stringify(users)}
+  </div>
+    );
+};
 
 
 export default Page;
