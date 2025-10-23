@@ -21,7 +21,12 @@ export const execute = inngest.createFunction(
         {
         system:
             'You are a helpful assistant that generates text based on user prompts.',
-        prompt: 'what is 2+2?',
+            prompt: 'what is 2+2?',
+        experimental_telemetry: {
+            isEnabled: true,
+            recordInputs: true,     
+            recordOutputs: true,
+        },
         model: google('gemini-2.5-flash'),
             });
 
