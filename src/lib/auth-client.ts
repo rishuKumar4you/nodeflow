@@ -1,3 +1,4 @@
+import {polarClient} from '@polar-sh/better-auth';
 import {createAuthClient} from 'better-auth/react';
 
 export const authClient = createAuthClient({
@@ -7,5 +8,6 @@ export const authClient = createAuthClient({
   // certificate.
   // Consider replacing this with an environment variable like
   // process.env.NEXT_PUBLIC_API_URL for different environments.
-  baseURL: 'http://localhost:3000',
-})
+  baseURL: process.env.APP_URL || 'http://localhost:3000',
+  plugins: [polarClient()],
+});
