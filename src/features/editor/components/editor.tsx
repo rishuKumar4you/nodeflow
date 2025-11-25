@@ -22,8 +22,9 @@ import '@xyflow/react/dist/style.css';
 import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "@/components/add-node-button";
 // import { EditorBottomBar } from "./editor-bottom-bar";
-// import { useSetAtom } from 'jotai';
-// import { editorAtom } from "../store/atoms";
+import { useSetAtom } from 'jotai';
+import { editorAtom } from "../store/atom";
+
 
 export const EditorLoading = () => {
     return <LoadingView message="Loading editor..." />;
@@ -34,7 +35,7 @@ export const EditorError = () => {
 };
 
 export const Editor = ({ workflowId }: { workflowId: string }) => {
-    const { data: workflow, isLoading, error } = useWorkflow(workflowId);
+    const { data: workflow } = useSuspenseWorkflow(workflowId);
 
     const setEditor = useSetAtom(editorAtom);
 
@@ -69,15 +70,6 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         [],
     );
 
-    // Conditional returns must come after all hooks
-    if (isLoading) {
-        return <LoadingView message="Loading editor..." />;
-    }
-
-    if (error || !workflow) {
-        return <ErrorView message="Error loading workflow" />;
-    }
-
     return (
         <div className="size-full flex flex-col">
             <div className="flex-1">
@@ -91,7 +83,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
                     nodeTypes={nodeComponents}
                     defaultEdgeOptions={{
                         style: {
-                            strokeWidth: 3,
+                            strokeWidth: 1,
                             stroke: '#3b82f6',
                         },
                     }}
@@ -115,7 +107,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
                     </Panel>
                 </ReactFlow>
             </div>
-            <EditorBottomBar workflowId={workflowId} />
+            {/* <EditorBottomBar workflowId={workflowId} /> */}
         </div>
     );
 

@@ -8,7 +8,7 @@ import { BaseNode, BaseNodeContent } from "@/components/react-flow/base-node";
 import { BaseHandle } from "@/components/react-flow/base-handle";
 import { WorkflowNode } from "@/components/workflow-node";
 import { eventsGetRequestFromJSON } from "@polar-sh/sdk/models/operations/eventsget.js";
-// import {type NodeStatus, NodeStatusIndicator } from "@/components/react-flow/node-status-indicator";
+import {type NodeStatus, NodeStatusIndicator } from "@/components/react-flow/node-status-indicator";
 
 interface BaseTriggerNodeProps extends NodeProps {
 
@@ -60,12 +60,13 @@ export const BaseTriggerNode = memo(
                 onDelete={handleDelete}
                 onSettings={onSettings}
             >   
-                {/* <NodeStatusIndicator
+                <NodeStatusIndicator
                     status={status}
+                    // status="success"
                     variant="border"
                     className="rounded-l-2xl"
 
-                > */}
+                >
                 <BaseNode status={status} onDoubleClick={onDoubleClick} className="
                 rounded-l-2xl relative group">
                     <BaseNodeContent>
@@ -87,7 +88,7 @@ export const BaseTriggerNode = memo(
                     </BaseNodeContent>
                     
                     </BaseNode>
-                    {/* </NodeStatusIndicator> */}
+                    </NodeStatusIndicator>
             </WorkflowNode>
         )
     },
