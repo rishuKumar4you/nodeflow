@@ -30,8 +30,6 @@ export const HttpRequestNode = memo((
         ? `${nodeData.method || "GET"}: ${nodeData.endpoint}`
         : "Not configured";
     
-   
-    
     return (
         <>
             <HttpRequestDialog
