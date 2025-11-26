@@ -37,6 +37,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
+import { de } from "zod/v4/locales";
 // import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
@@ -50,33 +51,41 @@ const formSchema = z.object({
     // .refine()   // TODO JSONs 
 });
 
+export type HttpsRequestFormValues = z.infer<typeof formSchema>;
+
 interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSubmit: (values: z.infer<typeof formSchema>) => void;
-    defaultEndpoint?: string;
-    defaultMethod?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"; 
-    defaultBody?: string;
+    defaultValues?: Partial<HttpsRequestFormValues>;
 };
 
 export const HttpRequestDialog = ({
     open,
     onOpenChange,
     onSubmit,
-    defaultEndpoint ="",
-    defaultMethod= "GET",
-    defaultBody= "",
+    defaultValues = {},
 }: Props) => { 
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            endpoint: defaultEndpoint,
-            method: defaultMethod,
-            body: defaultBody,
-
+            endpoint: defaultValues.endpoint || "",
+            method: defaultValues.method || "GET",
+            body: defaultValues.body || "",
         },
     });
+
+    useEffect(()=> {
+        if (open) {
+            form.reset({
+                endpoint: defaultValues.endpoint || "",
+                method: defaultValues.method || "GET",
+                body: defaultValues.body || "",
+            });
+        }
+
+    }, [open, defaultValues, form]);
 
     const watchMethod = form.watch("method");
     const showBodyField = ["POST", "PUT", "PATCH"].includes(watchMethod);
