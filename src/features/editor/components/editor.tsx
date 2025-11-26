@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { 
     ReactFlow,
     applyNodeChanges,
@@ -24,6 +24,8 @@ import { AddNodeButton } from "@/components/add-node-button";
 // import { EditorBottomBar } from "./editor-bottom-bar";
 import { useSetAtom } from 'jotai';
 import { editorAtom } from "../store/atom";
+import { NodeType } from "@/generated/prisma";
+import { ExecuteWorkflowButton } from "./execute-workflow-button";
 
 
 export const EditorLoading = () => {
@@ -70,6 +72,10 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         [],
     );
 
+    const hasManualTrigger = useMemo(()=> {
+        return nodes.some((node) => node.type === NodeType.MANUAL_TRIGGER)
+    }, [nodes]);
+
     return (
         <div className="size-full flex flex-col">
             <div className="flex-1">
@@ -105,6 +111,12 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
 
                         <AddNodeButton />
                     </Panel>
+                    {hasManualTrigger && (
+                        <Panel position='bottom-center'>
+
+                            <ExecuteWorkflowButton workflowId={workflowId} />
+                        </Panel>
+                    )}
                 </ReactFlow>
             </div>
             {/* <EditorBottomBar workflowId={workflowId} /> */}
