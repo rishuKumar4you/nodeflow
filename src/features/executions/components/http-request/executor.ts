@@ -3,6 +3,7 @@ import {NonRetriableError} from 'inngest';
 import ky, {type Options as KyOptions} from 'ky';
 
 type HttpRequestData = {
+  variableName?: string;
   endpoint?: string;
   method?: string;
   body?: unknown;
@@ -19,6 +20,11 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
   if (!data.endpoint) {
     // TODO: Publish "error" state for http request
     throw new NonRetriableError('HTTP Request node: No endpoint configured');
+
+  }
+
+  if (!data.variableName){
+    throw new NonRetriableError('HTTP Request node: Missing variable name');
   }
 
   const result = await step.run('http-request', async () => {
@@ -30,7 +36,11 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       if (data.body !== undefined) {
         options.body = data.body as BodyInit;
+
       }
+      options.headers = {
+        'Content-Type': 'application/json',
+      };
     }
 
     const response = await ky(endpoint, options);
@@ -40,13 +50,26 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
         await response.json() :
         await response.text();
 
-    return {
-      ...context,
+    const responsePayload = {
       httpResponse: {
         status: response.status,
         statusText: response.statusText,
         data: responseData,
       },
+    };
+
+
+    if (data.variableName){
+      return {
+        ...context,
+        [data.variableName]: responsePayload,
+      };
+    }
+
+    // Fallback to direct httpResponse for backwards comnpatiblity.
+    return {
+      ...context,
+      ...responsePayload,
     };
   });
   // TODO:  Publish "success" state for http request
